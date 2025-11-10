@@ -1,0 +1,1678 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>កម្មវិធីតាមដានសត្វចិញ្ចឹម - គ្លីនិកសត្វខាំផេត</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #4CAF50;
+            --secondary-color: #2196F3;
+            --danger-color: #f44336;
+            --warning-color: #ff9800;
+            --info-color: #00bcd4;
+            --success-color: #8BC34A;
+            --light-color: #f5f5f5;
+            --dark-color: #333;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Khmer OS', 'Arial', sans-serif;
+        }
+        
+        body {
+            background-color: #f0f0f0;
+            color: var(--dark-color);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            border-radius: 8px 8px 0 0;
+            margin-bottom: 20px;
+        }
+        
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        h1, h2, h3 {
+            margin-bottom: 15px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        input, select, button {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #3d8b40;
+        }
+        
+        .btn-secondary {
+            background-color: var(--secondary-color);
+        }
+        
+        .btn-secondary:hover {
+            background-color: #0b7dda;
+        }
+        
+        .btn-danger {
+            background-color: var(--danger-color);
+        }
+        
+        .btn-danger:hover {
+            background-color: #d32f2f;
+        }
+        
+        .btn-warning {
+            background-color: var(--warning-color);
+        }
+        
+        .btn-warning:hover {
+            background-color: #e68900;
+        }
+        
+        .btn-info {
+            background-color: var(--info-color);
+        }
+        
+        .btn-info:hover {
+            background-color: #0097a7;
+        }
+        
+        .btn-success {
+            background-color: var(--success-color);
+        }
+        
+        .btn-success:hover {
+            background-color: #689F38;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        th {
+            background-color: var(--light-color);
+            font-weight: bold;
+        }
+        
+        tr:hover {
+            background-color: #f9f9f9;
+        }
+        
+        .status-checked-in {
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+        
+        .status-checked-out {
+            color: var(--secondary-color);
+            font-weight: bold;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+        
+        .action-buttons button {
+            padding: 5px 10px;
+            font-size: 14px;
+            width: auto;
+        }
+        
+        .price-display {
+            font-weight: bold;
+            margin-top: 10px;
+            padding: 10px;
+            background-color: var(--light-color);
+            border-radius: 4px;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .receipt {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            background-color: white;
+        }
+        
+        .receipt-header {
+            text-align: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+        }
+        
+        .receipt-details {
+            margin-bottom: 20px;
+        }
+        
+        .receipt-details div {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+        
+        .receipt-total {
+            font-weight: bold;
+            font-size: 18px;
+            border-top: 1px solid #ddd;
+            padding-top: 10px;
+            margin-top: 10px;
+        }
+        
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            .receipt, .receipt * {
+                visibility: visible;
+            }
+            .receipt {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                box-shadow: none;
+            }
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .form-row .form-group {
+            flex: 1;
+        }
+        
+        .export-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #ddd;
+        }
+        
+        .export-options {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .export-options button {
+            width: auto;
+            padding: 8px 15px;
+        }
+        
+        .stats-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-card {
+            background-color: var(--light-color);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            color: var(--dark-color);
+        }
+        
+        /* MessageBox Styles */
+        .message-box {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            text-align: center;
+            min-width: 300px;
+            max-width: 500px;
+        }
+        
+        .message-box h3 {
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+        
+        .message-box p {
+            margin-bottom: 20px;
+            font-size: 16px;
+        }
+        
+        .message-box button {
+            width: auto;
+            padding: 10px 25px;
+            margin: 0 5px;
+        }
+        
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+        
+        .success-icon {
+            font-size: 48px;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+        
+        .report-controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .report-controls .form-group {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .filter-controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .filter-controls .form-group {
+            margin-bottom: 0;
+        }
+        
+        .search-filters {
+            background-color: var(--light-color);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .quick-search {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .quick-search input {
+            flex: 1;
+        }
+        
+        .filter-row {
+            display: flex;
+            gap: 15px;
+            align-items: end;
+        }
+        
+        .filter-row .form-group {
+            flex: 1;
+        }
+        
+        .filter-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .filter-actions button {
+            width: auto;
+            padding: 8px 15px;
+        }
+        
+        .edit-form {
+            background-color: var(--light-color);
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .form-actions button {
+            width: auto;
+            padding: 10px 20px;
+        }
+        
+        /* Check Out Modal Styles */
+        .check-out-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            min-width: 400px;
+            max-width: 600px;
+        }
+        
+        .check-out-modal h2 {
+            margin-bottom: 20px;
+            color: var(--primary-color);
+        }
+        
+        /* Auto Number Styles */
+        .auto-number-section {
+            display: flex;
+            gap: 10px;
+            align-items: end;
+        }
+        
+        .auto-number-section .form-group {
+            flex: 1;
+        }
+        
+        .auto-number-section button {
+            width: auto;
+            padding: 10px 15px;
+            margin-bottom: 15px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .card {
+                padding: 15px;
+            }
+            
+            header {
+                padding: 15px 0;
+            }
+            
+            .form-row, .filter-row {
+                flex-direction: column;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .action-buttons button {
+                width: 100%;
+            }
+            
+            .auto-number-section {
+                flex-direction: column;
+            }
+            
+            .auto-number-section button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>កម្មវិធីតាមដានសត្វចិញ្ចឹម</h1>
+            <p>គ្លីនិកសត្វខាំផេត</p>
+        </header>
+        
+        <div class="card">
+            <h2>ស្ថិតិសរុប</h2>
+            <div class="stats-summary" id="statsSummary">
+                <!-- Statistics will be populated by JavaScript -->
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>បញ្ចូលទិន្នន័យសត្វចិញ្ចឹម</h2>
+            <form id="petForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="petId">ID សត្វចិញ្ចឹម</label>
+                        <div class="auto-number-section">
+                            <input type="text" id="petId" required>
+                            <button type="button" id="autoGenerateId" class="btn-info">បង្កើត ID ស្វ័យប្រវត្តិ</button>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="petCount">ចំនួនសត្វ</label>
+                        <input type="number" id="petCount" min="1" value="1" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="ownerName">ឈ្មោះអតិថិជន</label>
+                    <input type="text" id="ownerName" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="petName">ឈ្មោះសត្វចិញ្ចឹម</label>
+                    <input type="text" id="petName" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="petType">ប្រភេទសត្វ</label>
+                    <select id="petType" required>
+                        <option value="">ជ្រើសរើសប្រភេទសត្វ</option>
+                        <option value="ឆ្កែ">ឆ្កែ</option>
+                        <option value="ឆ្មា">ឆ្មា</option>
+                        <option value="សត្វផ្សេងទៀត">សត្វផ្សេងទៀត</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="checkInDate">ថ្ងៃខែឆ្នាំដែលយកសត្វមកផ្ញើ</label>
+                    <input type="date" id="checkInDate" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="dailyRate">តម្លៃ/ថ្ងៃ(ក្នុងមួយក្បាល)</label>
+                    <select id="dailyRate" required>
+                        <option value="10">$10.00 ឬ 40,000 រៀល</option>
+                        <option value="15">$15.00 ឬ 60,000 រៀល</option>
+                        <option value="20">$20.00 ឬ 80,000 រៀល</option>
+                        <option value="25">$25.00 ឬ 100,000 រៀល</option>
+                        <option value="custom">កំណត់តម្លៃផ្សេង</option>
+                    </select>
+                </div>
+                
+                <div class="form-group hidden" id="customRateGroup">
+                    <label for="customRate">តម្លៃកំណត់ផ្ទាល់ ($ ក្នុងមួយក្បាល)</label>
+                    <input type="number" id="customRate" min="1" step="0.01">
+                </div>
+                
+                <button type="submit">រក្សាទុកទិន្នន័យ</button>
+            </form>
+        </div>
+        
+        <div class="card">
+            <h2>ស្វែងរក និងតម្រង</h2>
+            
+            <div class="search-filters">
+                <div class="filter-row">
+                    <div class="form-group">
+                        <label for="searchType">ស្វែងរកតាម</label>
+                        <select id="searchType">
+                            <option value="all">ទាំងអស់</option>
+                            <option value="id">ID សត្វ</option>
+                            <option value="owner">ឈ្មោះម្ចាស់សត្វ</option>
+                            <option value="pet">ឈ្មោះសត្វ</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="searchTerm">ពាក្យស្វែងរក</label>
+                        <input type="text" id="searchTerm" placeholder="បញ្ចូលពាក្យស្វែងរក...">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="filterStatus">តម្រងតាមស្ថានភាព</label>
+                        <select id="filterStatus">
+                            <option value="all">ទាំងអស់</option>
+                            <option value="checked-in">កំពុងផ្ញើ</option>
+                            <option value="checked-out">បានចាកចេញ</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="filterPetType">តម្រងតាមប្រភេទសត្វ</label>
+                        <select id="filterPetType">
+                            <option value="all">ទាំងអស់</option>
+                            <option value="ឆ្កែ">ឆ្កែ</option>
+                            <option value="ឆ្មា">ឆ្មា</option>
+                            <option value="សត្វផ្សេងទៀត">សត្វផ្សេងទៀត</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="filter-actions">
+                    <button id="applyFilters" class="btn-primary">អនុវត្តតម្រង</button>
+                    <button id="resetFilters" class="btn-secondary">កំណត់ឡើងវិញ</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>បញ្ជីសត្វចិញ្ចឹម</h2>
+            
+            <table id="petTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>ឈ្មោះអតិថិជន</th>
+                        <th>ឈ្មោះសត្វ</th>
+                        <th>ប្រភេទ</th>
+                        <th>ចំនួនសត្វ</th>
+                        <th>ថ្ងៃចូល</th>
+                        <th>ថ្ងៃចាកចេញ</th>
+                        <th>ចំនួនថ្ងៃ</th>
+                        <th>តម្លៃសរុប</th>
+                        <th>ស្ថានភាព</th>
+                        <th>សកម្មភាព</th>
+                    </tr>
+                </thead>
+                <tbody id="petTableBody">
+                    <!-- ទិន្នន័យនឹងត្រូវបានបន្ថែមតាមរយៈ JavaScript -->
+                </tbody>
+            </table>
+            
+            <div class="export-section">
+                <div>
+                    <strong>សរុប:</strong> <span id="totalRecords">0</span> កំណត់ត្រា
+                </div>
+            </div>
+        </div>
+
+        <!-- Edit Pet Form -->
+        <div id="editPetSection" class="card hidden">
+            <h2>កែប្រែទិន្នន័យសត្វចិញ្ចឹម</h2>
+            <form id="editPetForm" class="edit-form">
+                <input type="hidden" id="editPetId">
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="editPetIdInput">ID សត្វចិញ្ចឹម</label>
+                        <input type="text" id="editPetIdInput" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editPetCount">ចំនួនសត្វ</label>
+                        <input type="number" id="editPetCount" min="1" value="1" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="editOwnerName">ឈ្មោះអតិថិជន</label>
+                    <input type="text" id="editOwnerName" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="editPetName">ឈ្មោះសត្វចិញ្ចឹម</label>
+                    <input type="text" id="editPetName" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="editPetType">ប្រភេទសត្វ</label>
+                    <select id="editPetType" required>
+                        <option value="">ជ្រើសរើសប្រភេទសត្វ</option>
+                        <option value="ឆ្កែ">ឆ្កែ</option>
+                        <option value="ឆ្មា">ឆ្មា</option>
+                        <option value="សត្វផ្សេងទៀត">សត្វផ្សេងទៀត</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="editCheckInDate">ថ្ងៃខែឆ្នាំដែលយកសត្វមកផ្ញើ</label>
+                    <input type="date" id="editCheckInDate" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="editDailyRate">តម្លៃ/ថ្ងៃ(ក្នុងមួយក្បាល)</label>
+                    <select id="editDailyRate" required>
+                        <option value="10">$10.00 ឬ 40,000 រៀល</option>
+                        <option value="15">$15.00 ឬ 60,000 រៀល</option>
+                        <option value="20">$20.00 ឬ 80,000 រៀល</option>
+                        <option value="25">$25.00 ឬ 100,000 រៀល</option>
+                        <option value="custom">កំណត់តម្លៃផ្សេង</option>
+                    </select>
+                </div>
+                
+                <div class="form-group hidden" id="editCustomRateGroup">
+                    <label for="editCustomRate">តម្លៃកំណត់ផ្ទាល់ ($ ក្នុងមួយក្បាល)</label>
+                    <input type="number" id="editCustomRate" min="1" step="0.01">
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn-success">រក្សាទុកការកែប្រែ</button>
+                    <button type="button" id="cancelEdit" class="btn-secondary">បោះបង់</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="card">
+            <h2>របាយការណ៍ និងនាំចេញទិន្នន័យ</h2>
+            
+            <div class="report-controls">
+                <div class="form-group">
+                    <label for="reportType">ប្រភេទរបាយការណ៍</label>
+                    <select id="reportType">
+                        <option value="all">ទិន្នន័យទាំងអស់</option>
+                        <option value="checked-in">សត្វកំពុងផ្ញើ</option>
+                        <option value="checked-out">សត្វបានចាកចេញ</option>
+                        <option value="monthly">របាយការណ៍ប្រចាំខែ</option>
+                        <option value="revenue">របាយការណ៍ចំណូល</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="reportMonth">ខែ (សម្រាប់របាយការណ៍ប្រចាំខែ)</label>
+                    <input type="month" id="reportMonth">
+                </div>
+            </div>
+            
+            <div class="export-options">
+                <button id="exportExcel" class="btn-warning">នាំចេញទិន្នន័យទាំងអស់</button>
+                <button id="exportReport" class="btn-info">នាំចេញរបាយការណ៍</button>
+                <button id="exportSummary" class="btn-secondary">នាំចេញរបាយការណ៍សង្ខេប</button>
+            </div>
+        </div>
+        
+        <!-- Modal for Check Out -->
+        <div id="checkOutModal" class="check-out-modal hidden">
+            <h2>ពិនិត្យចេញ</h2>
+            <form id="checkOutForm">
+                <div class="form-group">
+                    <label for="checkOutDate">ថ្ងៃខែឆ្នាំចាកចេញ</label>
+                    <input type="date" id="checkOutDate" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="discount">ភាគរយបញ្ចុះតម្លៃ (%)</label>
+                    <input type="number" id="discount" min="0" max="100" value="0">
+                </div>
+                
+                <div class="price-display">
+                    <div>តម្លៃសរុប: <span id="totalPriceDisplay">$0.00 / 0 រៀល</span></div>
+                    <div>បញ្ចុះតម្លៃ: <span id="discountDisplay">0%</span></div>
+                    <div>តម្លៃបន្ទាប់ពីបញ្ចុះ: <span id="finalPriceDisplay">$0.00 / 0 រៀល</span></div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button type="submit" class="btn-secondary">ពិនិត្យចេញ</button>
+                    <button type="button" id="cancelCheckOut" class="btn-danger">បោះបង់</button>
+                </div>
+            </form>
+        </div>
+        
+        <!-- Receipt Section -->
+        <div id="receiptSection" class="card hidden">
+            <div class="receipt">
+                <div class="receipt-header">
+                    <h2>បង្កាន់ដៃគ្លីនិកសត្វខាំផេត</h2>
+                    <p>កម្មវិធីតាមដានសត្វចិញ្ចឹម</p>
+                </div>
+                
+                <div class="receipt-details">
+                    <div>
+                        <span>ID សត្វចិញ្ចឹម:</span>
+                        <span id="receiptPetId"></span>
+                    </div>
+                    <div>
+                        <span>ឈ្មោះអតិថិជន:</span>
+                        <span id="receiptOwnerName"></span>
+                    </div>
+                    <div>
+                        <span>ឈ្មោះសត្វចិញ្ចឹម:</span>
+                        <span id="receiptPetName"></span>
+                    </div>
+                    <div>
+                        <span>ប្រភេទសត្វ:</span>
+                        <span id="receiptPetType"></span>
+                    </div>
+                    <div>
+                        <span>ចំនួនសត្វ:</span>
+                        <span id="receiptPetCount"></span>
+                    </div>
+                    <div>
+                        <span>ថ្ងៃចូល:</span>
+                        <span id="receiptCheckInDate"></span>
+                    </div>
+                    <div>
+                        <span>ថ្ងៃចាកចេញ:</span>
+                        <span id="receiptCheckOutDate"></span>
+                    </div>
+                    <div>
+                        <span>ចំនួនថ្ងៃ:</span>
+                        <span id="receiptDays"></span>
+                    </div>
+                    <div>
+                        <span>តម្លៃ/ថ្ងៃ(ក្នុងមួយក្បាល):</span>
+                        <span id="receiptDailyRate"></span>
+                    </div>
+                    <div>
+                        <span>បញ្ចុះតម្លៃ:</span>
+                        <span id="receiptDiscount"></span>
+                    </div>
+                </div>
+                
+                <div class="receipt-total">
+                    <div>
+                        <span>តម្លៃសរុប:</span>
+                        <span id="receiptTotalPrice"></span>
+                    </div>
+                </div>
+                
+                <div style="text-align: center; margin-top: 20px;">
+                    <button onclick="window.print()" class="btn-secondary">បោះពុម្ព PDF</button>
+                    <button id="closeReceipt" class="btn-danger">បិទ</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MessageBox -->
+    <div id="messageBox" class="message-box hidden">
+        <div class="success-icon">✓</div>
+        <h3 id="messageTitle">ជោគជ័យ!</h3>
+        <p id="messageText">ទិន្នន័យត្រូវបានរក្សាទុកដោយជោគជ័យ!</p>
+        <button id="messageOkBtn" class="btn-secondary">យល់ព្រម</button>
+    </div>
+    
+    <div id="overlay" class="overlay hidden"></div>
+
+    <script>
+        // ទិន្នន័យឧទាហរណ៍
+        let pets = JSON.parse(localStorage.getItem('pets')) || [];
+        let currentPetId = null;
+        
+        // អត្រាប្តូរប្រាក់
+        const exchangeRate = 4000; // 1 USD = 4000 KHR
+        
+        // DOM Elements
+        const petForm = document.getElementById('petForm');
+        const petTableBody = document.getElementById('petTableBody');
+        const checkOutModal = document.getElementById('checkOutModal');
+        const checkOutForm = document.getElementById('checkOutForm');
+        const receiptSection = document.getElementById('receiptSection');
+        const filterStatus = document.getElementById('filterStatus');
+        const dailyRateSelect = document.getElementById('dailyRate');
+        const customRateGroup = document.getElementById('customRateGroup');
+        const customRateInput = document.getElementById('customRate');
+        const exportExcelBtn = document.getElementById('exportExcel');
+        const exportReportBtn = document.getElementById('exportReport');
+        const exportSummaryBtn = document.getElementById('exportSummary');
+        const totalRecordsSpan = document.getElementById('totalRecords');
+        const statsSummary = document.getElementById('statsSummary');
+        const messageBox = document.getElementById('messageBox');
+        const messageTitle = document.getElementById('messageTitle');
+        const messageText = document.getElementById('messageText');
+        const messageOkBtn = document.getElementById('messageOkBtn');
+        const overlay = document.getElementById('overlay');
+        const reportType = document.getElementById('reportType');
+        const reportMonth = document.getElementById('reportMonth');
+        
+        // New Search and Filter Elements
+        const searchType = document.getElementById('searchType');
+        const searchTerm = document.getElementById('searchTerm');
+        const filterPetType = document.getElementById('filterPetType');
+        const applyFilters = document.getElementById('applyFilters');
+        const resetFilters = document.getElementById('resetFilters');
+        
+        // Edit Form Elements
+        const editPetSection = document.getElementById('editPetSection');
+        const editPetForm = document.getElementById('editPetForm');
+        const editPetId = document.getElementById('editPetId');
+        const editPetIdInput = document.getElementById('editPetIdInput');
+        const editPetCount = document.getElementById('editPetCount');
+        const editOwnerName = document.getElementById('editOwnerName');
+        const editPetName = document.getElementById('editPetName');
+        const editPetType = document.getElementById('editPetType');
+        const editCheckInDate = document.getElementById('editCheckInDate');
+        const editDailyRate = document.getElementById('editDailyRate');
+        const editCustomRateGroup = document.getElementById('editCustomRateGroup');
+        const editCustomRate = document.getElementById('editCustomRate');
+        const cancelEdit = document.getElementById('cancelEdit');
+        
+        // Auto Number Elements
+        const autoGenerateIdBtn = document.getElementById('autoGenerateId');
+        const petIdInput = document.getElementById('petId');
+        
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            renderPetTable();
+            updateStatsSummary();
+            
+            // Set default dates
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('checkInDate').value = today;
+            document.getElementById('checkOutDate').value = today;
+            
+            // Set default report month to current month
+            const currentMonth = new Date().toISOString().slice(0, 7);
+            reportMonth.value = currentMonth;
+            
+            // Auto-generate ID on page load
+            autoGenerateId();
+        });
+        
+        petForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            addPet();
+        });
+        
+        checkOutForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            checkOutPet();
+        });
+        
+        document.getElementById('cancelCheckOut').addEventListener('click', function() {
+            checkOutModal.classList.add('hidden');
+            overlay.classList.add('hidden');
+        });
+        
+        document.getElementById('closeReceipt').addEventListener('click', function() {
+            receiptSection.classList.add('hidden');
+        });
+        
+        filterStatus.addEventListener('change', function() {
+            renderPetTable();
+        });
+        
+        dailyRateSelect.addEventListener('change', function() {
+            if (this.value === 'custom') {
+                customRateGroup.classList.remove('hidden');
+            } else {
+                customRateGroup.classList.add('hidden');
+            }
+        });
+        
+        exportExcelBtn.addEventListener('click', function() {
+            exportToExcel();
+        });
+        
+        exportReportBtn.addEventListener('click', function() {
+            exportReportToExcel();
+        });
+        
+        exportSummaryBtn.addEventListener('click', function() {
+            exportSummaryReport();
+        });
+        
+        messageOkBtn.addEventListener('click', function() {
+            hideMessageBox();
+        });
+        
+        // New Search and Filter Event Listeners
+        applyFilters.addEventListener('click', function() {
+            renderPetTable();
+        });
+        
+        resetFilters.addEventListener('click', function() {
+            resetAllFilters();
+        });
+        
+        // Auto-apply filters when search term changes
+        searchTerm.addEventListener('input', function() {
+            renderPetTable();
+        });
+        
+        searchType.addEventListener('change', function() {
+            renderPetTable();
+        });
+        
+        filterPetType.addEventListener('change', function() {
+            renderPetTable();
+        });
+        
+        // Edit Form Event Listeners
+        editPetForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            updatePet();
+        });
+        
+        cancelEdit.addEventListener('click', function() {
+            editPetSection.classList.add('hidden');
+        });
+        
+        editDailyRate.addEventListener('change', function() {
+            if (this.value === 'custom') {
+                editCustomRateGroup.classList.remove('hidden');
+            } else {
+                editCustomRateGroup.classList.add('hidden');
+            }
+        });
+        
+        // Auto Number Event Listener
+        autoGenerateIdBtn.addEventListener('click', function() {
+            autoGenerateId();
+        });
+        
+        // Functions
+        function autoGenerateId() {
+            // Default prefix and digits
+            const prefix = 'Pet';
+            const digits = 3;
+            
+            // Extract all IDs with the current prefix
+            const existingIds = pets
+                .map(pet => pet.id)
+                .filter(id => id.startsWith(prefix))
+                .map(id => {
+                    const numberPart = id.substring(prefix.length);
+                    return parseInt(numberPart) || 0;
+                });
+            
+            // Find the highest number
+            const highestNumber = existingIds.length > 0 ? Math.max(...existingIds) : 0;
+            
+            // Generate next number
+            const nextNumber = highestNumber + 1;
+            const formattedNumber = nextNumber.toString().padStart(digits, '0');
+            const newId = prefix + formattedNumber;
+            
+            // Set the ID in the input field
+            petIdInput.value = newId;
+        }
+        
+        function addPet() {
+            const petId = document.getElementById('petId').value;
+            const petCount = parseInt(document.getElementById('petCount').value) || 1;
+            const ownerName = document.getElementById('ownerName').value;
+            const petName = document.getElementById('petName').value;
+            const petType = document.getElementById('petType').value;
+            const checkInDate = document.getElementById('checkInDate').value;
+            
+            let dailyRate;
+            if (dailyRateSelect.value === 'custom') {
+                dailyRate = parseFloat(customRateInput.value) || 10;
+            } else {
+                dailyRate = parseFloat(dailyRateSelect.value);
+            }
+            
+            // Check if ID already exists
+            if (pets.some(pet => pet.id === petId)) {
+                showMessageBox('កំហុស', 'ID សត្វចិញ្ចឹមនេះមានរួចហើយ!', 'error');
+                return;
+            }
+            
+            const newPet = {
+                id: petId,
+                petCount: petCount,
+                ownerName: ownerName,
+                petName: petName,
+                petType: petType,
+                checkInDate: checkInDate,
+                checkOutDate: null,
+                dailyRate: dailyRate,
+                status: 'checked-in',
+                discount: 0
+            };
+            
+            pets.push(newPet);
+            savePets();
+            renderPetTable();
+            updateStatsSummary();
+            
+            // Reset form but keep auto-generated ID for next entry
+            document.getElementById('petCount').value = 1;
+            document.getElementById('ownerName').value = '';
+            document.getElementById('petName').value = '';
+            document.getElementById('petType').value = '';
+            document.getElementById('checkInDate').value = new Date().toISOString().split('T')[0];
+            dailyRateSelect.value = '10';
+            customRateGroup.classList.add('hidden');
+            
+            // Auto-generate next ID
+            autoGenerateId();
+            
+            // Show success message
+            showMessageBox('ជោគជ័យ', 'ទិន្នន័យត្រូវបានរក្សាទុកដោយជោគជ័យ!', 'success');
+        }
+        
+        function openCheckOutModal(petId) {
+            currentPetId = petId;
+            const pet = pets.find(p => p.id === petId);
+            
+            if (pet) {
+                // Calculate total days and price
+                const checkInDate = new Date(pet.checkInDate);
+                const today = new Date();
+                const days = Math.max(1, Math.ceil((today - checkInDate) / (1000 * 60 * 60 * 24)));
+                const totalPrice = days * pet.dailyRate * pet.petCount;
+                
+                document.getElementById('checkOutDate').value = today.toISOString().split('T')[0];
+                document.getElementById('discount').value = 0;
+                
+                updatePriceDisplay(totalPrice, 0);
+                
+                checkOutModal.classList.remove('hidden');
+                overlay.classList.remove('hidden');
+            }
+        }
+        
+        function checkOutPet() {
+            const checkOutDate = document.getElementById('checkOutDate').value;
+            const discount = parseFloat(document.getElementById('discount').value) || 0;
+            
+            const petIndex = pets.findIndex(p => p.id === currentPetId);
+            if (petIndex !== -1) {
+                pets[petIndex].checkOutDate = checkOutDate;
+                pets[petIndex].status = 'checked-out';
+                pets[petIndex].discount = discount;
+                
+                savePets();
+                renderPetTable();
+                updateStatsSummary();
+                checkOutModal.classList.add('hidden');
+                overlay.classList.add('hidden');
+                
+                // Show success message
+                showMessageBox('ជោគជ័យ', 'សត្វចិញ្ចឹមត្រូវបានពិនិត្យចេញដោយជោគជ័យ!', 'success');
+                
+                // Show receipt
+                showReceipt(currentPetId);
+            }
+        }
+        
+        function updatePriceDisplay(totalPrice, discount) {
+            const discountAmount = totalPrice * (discount / 100);
+            const finalPrice = totalPrice - discountAmount;
+            
+            document.getElementById('totalPriceDisplay').textContent = 
+                `$${totalPrice.toFixed(2)} / ${(totalPrice * exchangeRate).toLocaleString()} រៀល`;
+            
+            document.getElementById('discountDisplay').textContent = `${discount}%`;
+            
+            document.getElementById('finalPriceDisplay').textContent = 
+                `$${finalPrice.toFixed(2)} / ${(finalPrice * exchangeRate).toLocaleString()} រៀល`;
+        }
+        
+        document.getElementById('discount').addEventListener('input', function() {
+            const pet = pets.find(p => p.id === currentPetId);
+            if (pet) {
+                const checkInDate = new Date(pet.checkInDate);
+                const checkOutDate = new Date(document.getElementById('checkOutDate').value);
+                const days = Math.max(1, Math.ceil((checkOutDate - checkInDate) / (1000 * 60 * 60 * 24)));
+                const totalPrice = days * pet.dailyRate * pet.petCount;
+                const discount = parseFloat(this.value) || 0;
+                
+                updatePriceDisplay(totalPrice, discount);
+            }
+        });
+        
+        function showReceipt(petId) {
+            const pet = pets.find(p => p.id === petId);
+            
+            if (pet) {
+                const checkInDate = new Date(pet.checkInDate);
+                const checkOutDate = new Date(pet.checkOutDate);
+                const days = Math.max(1, Math.ceil((checkOutDate - checkInDate) / (1000 * 60 * 60 * 24)));
+                const totalPrice = days * pet.dailyRate * pet.petCount;
+                const discountAmount = totalPrice * (pet.discount / 100);
+                const finalPrice = totalPrice - discountAmount;
+                
+                document.getElementById('receiptPetId').textContent = pet.id;
+                document.getElementById('receiptOwnerName').textContent = pet.ownerName;
+                document.getElementById('receiptPetName').textContent = pet.petName;
+                document.getElementById('receiptPetType').textContent = pet.petType;
+                document.getElementById('receiptPetCount').textContent = pet.petCount;
+                document.getElementById('receiptCheckInDate').textContent = formatDate(pet.checkInDate);
+                document.getElementById('receiptCheckOutDate').textContent = formatDate(pet.checkOutDate);
+                document.getElementById('receiptDays').textContent = days;
+                document.getElementById('receiptDailyRate').textContent = 
+                    `$${pet.dailyRate.toFixed(2)} ឬ ${(pet.dailyRate * exchangeRate).toLocaleString()} រៀល`;
+                document.getElementById('receiptDiscount').textContent = `${pet.discount}%`;
+                document.getElementById('receiptTotalPrice').textContent = 
+                    `$${finalPrice.toFixed(2)} / ${(finalPrice * exchangeRate).toLocaleString()} រៀល`;
+                
+                receiptSection.classList.remove('hidden');
+            }
+        }
+        
+        function renderPetTable() {
+            petTableBody.innerHTML = '';
+            
+            const searchTermValue = searchTerm.value.toLowerCase();
+            const searchTypeValue = searchType.value;
+            const statusFilter = filterStatus.value;
+            const petTypeFilter = filterPetType.value;
+            
+            const filteredPets = pets.filter(pet => {
+                // Advanced search filter
+                let matchesAdvancedSearch = true;
+                if (searchTermValue) {
+                    if (searchTypeValue === 'id') {
+                        matchesAdvancedSearch = pet.id.toLowerCase().includes(searchTermValue);
+                    } else if (searchTypeValue === 'owner') {
+                        matchesAdvancedSearch = pet.ownerName.toLowerCase().includes(searchTermValue);
+                    } else if (searchTypeValue === 'pet') {
+                        matchesAdvancedSearch = pet.petName.toLowerCase().includes(searchTermValue);
+                    } else {
+                        matchesAdvancedSearch = 
+                            pet.id.toLowerCase().includes(searchTermValue) ||
+                            pet.ownerName.toLowerCase().includes(searchTermValue) ||
+                            pet.petName.toLowerCase().includes(searchTermValue);
+                    }
+                }
+                
+                // Status filter
+                const matchesStatus = 
+                    statusFilter === 'all' || 
+                    (statusFilter === 'checked-in' && pet.status === 'checked-in') ||
+                    (statusFilter === 'checked-out' && pet.status === 'checked-out');
+                
+                // Pet type filter
+                const matchesPetType = 
+                    petTypeFilter === 'all' || 
+                    pet.petType === petTypeFilter;
+                
+                return matchesAdvancedSearch && matchesStatus && matchesPetType;
+            });
+            
+            totalRecordsSpan.textContent = filteredPets.length;
+            
+            if (filteredPets.length === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = `<td colspan="11" style="text-align: center;">មិនមានទិន្នន័យ</td>`;
+                petTableBody.appendChild(row);
+                return;
+            }
+            
+            filteredPets.forEach(pet => {
+                const row = document.createElement('tr');
+                
+                // Calculate days and total price
+                let days = 0;
+                let totalPrice = 0;
+                
+                if (pet.status === 'checked-out') {
+                    const checkInDate = new Date(pet.checkInDate);
+                    const checkOutDate = new Date(pet.checkOutDate);
+                    days = Math.max(1, Math.ceil((checkOutDate - checkInDate) / (1000 * 60 * 60 * 24)));
+                    totalPrice = days * pet.dailyRate * pet.petCount;
+                    
+                    // Apply discount
+                    const discountAmount = totalPrice * (pet.discount / 100);
+                    totalPrice = totalPrice - discountAmount;
+                } else {
+                    const checkInDate = new Date(pet.checkInDate);
+                    const today = new Date();
+                    days = Math.max(1, Math.ceil((today - checkInDate) / (1000 * 60 * 60 * 24)));
+                    totalPrice = days * pet.dailyRate * pet.petCount;
+                }
+                
+                row.innerHTML = `
+                    <td>${pet.id}</td>
+                    <td>${pet.ownerName}</td>
+                    <td>${pet.petName}</td>
+                    <td>${pet.petType}</td>
+                    <td>${pet.petCount}</td>
+                    <td>${formatDate(pet.checkInDate)}</td>
+                    <td>${pet.checkOutDate ? formatDate(pet.checkOutDate) : '-'}</td>
+                    <td>${days}</td>
+                    <td>$${totalPrice.toFixed(2)} / ${(totalPrice * exchangeRate).toLocaleString()} រៀល</td>
+                    <td class="status-${pet.status}">${pet.status === 'checked-in' ? 'កំពុងផ្ញើ' : 'បានចាកចេញ'}</td>
+                    <td class="action-buttons">
+                        ${pet.status === 'checked-in' ? 
+                            `<button onclick="openCheckOutModal('${pet.id}')" class="btn-secondary">ពិនិត្យចេញ</button>` : 
+                            `<button onclick="showReceipt('${pet.id}')" class="btn-secondary">បង្កាន់ដៃ</button>`
+                        }
+                        <button onclick="editPet('${pet.id}')" class="btn-success">កែប្រែ</button>
+                        <button onclick="deletePet('${pet.id}')" class="btn-danger">លុប</button>
+                    </td>
+                `;
+                
+                petTableBody.appendChild(row);
+            });
+        }
+        
+        // Function to edit pet
+        function editPet(petId) {
+            const pet = pets.find(p => p.id === petId);
+            
+            if (pet) {
+                // Fill the edit form with current data
+                editPetId.value = pet.id;
+                editPetIdInput.value = pet.id;
+                editPetCount.value = pet.petCount;
+                editOwnerName.value = pet.ownerName;
+                editPetName.value = pet.petName;
+                editPetType.value = pet.petType;
+                editCheckInDate.value = pet.checkInDate;
+                
+                // Set daily rate
+                if ([10, 15, 20, 25].includes(pet.dailyRate)) {
+                    editDailyRate.value = pet.dailyRate;
+                    editCustomRateGroup.classList.add('hidden');
+                } else {
+                    editDailyRate.value = 'custom';
+                    editCustomRate.value = pet.dailyRate;
+                    editCustomRateGroup.classList.remove('hidden');
+                }
+                
+                // Show edit form
+                editPetSection.classList.remove('hidden');
+                
+                // Scroll to edit form
+                editPetSection.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+        
+        // Function to update pet
+        function updatePet() {
+            const petId = editPetId.value;
+            const newPetId = editPetIdInput.value;
+            const petCount = parseInt(editPetCount.value) || 1;
+            const ownerName = editOwnerName.value;
+            const petName = editPetName.value;
+            const petType = editPetType.value;
+            const checkInDate = editCheckInDate.value;
+            
+            let dailyRate;
+            if (editDailyRate.value === 'custom') {
+                dailyRate = parseFloat(editCustomRate.value) || 10;
+            } else {
+                dailyRate = parseFloat(editDailyRate.value);
+            }
+            
+            const petIndex = pets.findIndex(p => p.id === petId);
+            if (petIndex !== -1) {
+                // Check if new ID already exists (if ID is being changed)
+                if (newPetId !== petId && pets.some(pet => pet.id === newPetId)) {
+                    showMessageBox('កំហុស', 'ID សត្វចិញ្ចឹមនេះមានរួចហើយ!', 'error');
+                    return;
+                }
+                
+                // Update pet data
+                pets[petIndex].id = newPetId;
+                pets[petIndex].petCount = petCount;
+                pets[petIndex].ownerName = ownerName;
+                pets[petIndex].petName = petName;
+                pets[petIndex].petType = petType;
+                pets[petIndex].checkInDate = checkInDate;
+                pets[petIndex].dailyRate = dailyRate;
+                
+                savePets();
+                renderPetTable();
+                updateStatsSummary();
+                editPetSection.classList.add('hidden');
+                
+                // Show success message
+                showMessageBox('ជោគជ័យ', 'ទិន្នន័យត្រូវបានកែប្រែដោយជោគជ័យ!', 'success');
+            }
+        }
+        
+        function resetAllFilters() {
+            searchType.value = 'all';
+            searchTerm.value = '';
+            filterStatus.value = 'all';
+            filterPetType.value = 'all';
+            renderPetTable();
+        }
+        
+        function deletePet(petId) {
+            if (confirm('តើអ្នកពិតជាចង់លុបទិន្នន័យនេះមែនទេ?')) {
+                pets = pets.filter(pet => pet.id !== petId);
+                savePets();
+                renderPetTable();
+                updateStatsSummary();
+                showMessageBox('ជោគជ័យ', 'ទិន្នន័យត្រូវបានលុបដោយជោគជ័យ!', 'success');
+            }
+        }
+        
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('km-KH');
+        }
+        
+        function savePets() {
+            localStorage.setItem('pets', JSON.stringify(pets));
+        }
+        
+        function updateStatsSummary() {
+            const totalPets = pets.length;
+            const checkedInPets = pets.filter(pet => pet.status === 'checked-in').length;
+            const checkedOutPets = pets.filter(pet => pet.status === 'checked-out').length;
+            
+            // Calculate total revenue
+            let totalRevenue = 0;
+            pets.forEach(pet => {
+                if (pet.status === 'checked-out') {
+                    const checkInDate = new Date(pet.checkInDate);
+                    const checkOutDate = new Date(pet.checkOutDate);
+                    const days = Math.max(1, Math.ceil((checkOutDate - checkInDate) / (1000 * 60 * 60 * 24)));
+                    let totalPrice = days * pet.dailyRate * pet.petCount;
+                    
+                    // Apply discount
+                    const discountAmount = totalPrice * (pet.discount / 100);
+                    totalPrice = totalPrice - discountAmount;
+                    
+                    totalRevenue += totalPrice;
+                }
+            });
+            
+            statsSummary.innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-value">${totalPets}</div>
+                    <div class="stat-label">សត្វសរុប</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${checkedInPets}</div>
+                    <div class="stat-label">កំពុងផ្ញើ</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${checkedOutPets}</div>
+                    <div class="stat-label">បានចាកចេញ</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">$${totalRevenue.toFixed(2)}</div>
+                    <div class="stat-label">ចំណូលសរុប</div>
+                </div>
+            `;
+        }
+        
+        // មុខងារនាំចេញទិន្នន័យទាំងអស់ទៅជា Excel
+        function exportToExcel() {
+            // Prepare data for Excel export
+            const excelData = pets.map(pet => {
+                const checkInDate = new Date(pet.checkInDate);
+                const checkOutDate = pet.checkOutDate ? new Date(pet.checkOutDate) : new Date();
+                const days = Math.max(1, Math.ceil((checkOutDate - checkInDate) / (1000 * 60 * 60 * 24)));
+                let totalPrice = days * pet.dailyRate * pet.petCount;
+                
+                if (pet.status === 'checked-out') {
+                    const discountAmount = totalPrice * (pet.discount / 100);
+                    totalPrice = totalPrice - discountAmount;
+                }
+                
+                return {
+                    'ID': pet.id,
+                    'Owner Name': pet.ownerName,
+                    'Pet Name': pet.petName,
+                    'Pet Type': pet.petType,
+                    'Pet Count': pet.petCount,
+                    'Check In Date': formatDate(pet.checkInDate),
+                    'Check Out Date': pet.checkOutDate ? formatDate(pet.checkOutDate) : 'N/A',
+                    'Days': days,
+                    'Daily Rate ($)': pet.dailyRate,
+                    'Daily Rate (KHR)': pet.dailyRate * exchangeRate,
+                    'Discount (%)': pet.discount,
+                    'Total Price ($)': totalPrice.toFixed(2),
+                    'Total Price (KHR)': (totalPrice * exchangeRate).toLocaleString(),
+                    'Status': pet.status === 'checked-in' ? 'Checked In' : 'Checked Out'
+                };
+            });
+            
+            // Create worksheet
+            const ws = XLSX.utils.json_to_sheet(excelData);
+            
+            // Create workbook
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Pet Clinic Data');
+            
+            // Generate Excel file and download
+            const currentDate = new Date().toISOString().split('T')[0];
+            XLSX.writeFile(wb, `Pet_Clinic_Report_${currentDate}.xlsx`);
+            
+            // Show success message
+            showMessageBox('ជោគជ័យ', 'ឯកសារ Excel ត្រូវបាននាំចេញដោយជោគជ័យ!', 'success');
+        }
+        
+        // មុខងារនាំចេញរបាយការណ៍ទៅជា Excel
+        function exportReportToExcel() {
+            const reportTypeValue = reportType.value;
+            const reportMonthValue = reportMonth.value;
+            
+            let filteredPets = [...pets];
+            
+            // Filter by report type
+            if (reportTypeValue === 'checked-in') {
+                filteredPets = pets.filter(pet => pet.status === 'checked-in');
+            } else if (reportTypeValue === 'checked-out') {
+                filteredPets = pets.filter(pet => pet.status === 'checked-out');
+            } else if (reportTypeValue === 'monthly') {
+                filteredPets = pets.filter(pet => {
+                    const checkInMonth = pet.checkInDate.substring(0, 7);
+                    return checkInMonth === reportMonthValue;
+                });
+            } else if (reportTypeValue === 'revenue') {
+                filteredPets = pets.filter(pet => pet.status === 'checked-out');
+            }
+            
+            if (filteredPets.length === 0) {
+                showMessageBox('ព័ត៌មាន', 'មិនមានទិន្នន័យសម្រាប់របាយការណ៍នេះទេ!', 'error');
+                return;
+            }
+            
+            // Prepare data for Excel export
+            const excelData = filteredPets.map(pet => {
+                const checkInDate = new Date(pet.checkInDate);
+                const checkOutDate = pet.checkOutDate ? new Date(pet.checkOutDate) : new Date();
+                const days = Math.max(1, Math.ceil((checkOutDate - checkInDate) / (1000 * 60 * 60 * 24)));
+                let totalPrice = days * pet.dailyRate * pet.petCount;
+                
+                if (pet.status === 'checked-out') {
+                    const discountAmount = totalPrice * (pet.discount / 100);
+                    totalPrice = totalPrice - discountAmount;
+                }
+                
+                return {
+                    'ID': pet.id,
+                    'Owner Name': pet.ownerName,
+                    'Pet Name': pet.petName,
+                    'Pet Type': pet.petType,
+                    'Pet Count': pet.petCount,
+                    'Check In Date': formatDate(pet.checkInDate),
+                    'Check Out Date': pet.checkOutDate ? formatDate(pet.checkOutDate) : 'N/A',
+                    'Days': days,
+                    'Daily Rate ($)': pet.dailyRate,
+                    'Daily Rate (KHR)': pet.dailyRate * exchangeRate,
+                    'Discount (%)': pet.discount,
+                    'Total Price ($)': totalPrice.toFixed(2),
+                    'Total Price (KHR)': (totalPrice * exchangeRate).toLocaleString(),
+                    'Status': pet.status === 'checked-in' ? 'Checked In' : 'Checked Out'
+                };
+            });
+            
+            // Create worksheet
+            const ws = XLSX.utils.json_to_sheet(excelData);
+            
+            // Create workbook
+            const wb = XLSX.utils.book_new();
+            
+            let sheetName = 'Pet Clinic Report';
+            if (reportTypeValue === 'checked-in') {
+                sheetName = 'Checked In Pets';
+            } else if (reportTypeValue === 'checked-out') {
+                sheetName = 'Checked Out Pets';
+            } else if (reportTypeValue === 'monthly') {
+                sheetName = `Monthly Report ${reportMonthValue}`;
+            } else if (reportTypeValue === 'revenue') {
+                sheetName = 'Revenue Report';
+            }
+            
+            XLSX.utils.book_append_sheet(wb, ws, sheetName);
+            
+            // Generate Excel file and download
+            const currentDate = new Date().toISOString().split('T')[0];
+            XLSX.writeFile(wb, `Pet_Clinic_${sheetName.replace(/\s+/g, '_')}_${currentDate}.xlsx`);
+            
+            // Show success message
+            showMessageBox('ជោគជ័យ', 'របាយការណ៍ Excel ត្រូវបាននាំចេញដោយជោគជ័យ!', 'success');
+        }
+        
+        function exportSummaryReport() {
+            // Calculate summary statistics
+            const totalPets = pets.length;
+            const checkedInPets = pets.filter(pet => pet.status === 'checked-in').length;
+            const checkedOutPets = pets.filter(pet => pet.status === 'checked-out').length;
+            
+            let totalRevenue = 0;
+            let totalPetsCount = 0;
+            
+            pets.forEach(pet => {
+                totalPetsCount += pet.petCount;
+                
+                if (pet.status === 'checked-out') {
+                    const checkInDate = new Date(pet.checkInDate);
+                    const checkOutDate = new Date(pet.checkOutDate);
+                    const days = Math.max(1, Math.ceil((checkOutDate - checkInDate) / (1000 * 60 * 60 * 24)));
+                    let totalPrice = days * pet.dailyRate * pet.petCount;
+                    
+                    const discountAmount = totalPrice * (pet.discount / 100);
+                    totalPrice = totalPrice - discountAmount;
+                    
+                    totalRevenue += totalPrice;
+                }
+            });
+            
+            // Create summary data
+            const summaryData = [
+                {'Metric': 'Total Records', 'Value': totalPets},
+                {'Metric': 'Checked In Pets', 'Value': checkedInPets},
+                {'Metric': 'Checked Out Pets', 'Value': checkedOutPets},
+                {'Metric': 'Total Animals', 'Value': totalPetsCount},
+                {'Metric': 'Total Revenue ($)', 'Value': totalRevenue.toFixed(2)},
+                {'Metric': 'Total Revenue (KHR)', 'Value': (totalRevenue * exchangeRate).toLocaleString()},
+                {'Metric': 'Report Date', 'Value': new Date().toLocaleDateString('en-US')}
+            ];
+            
+            // Create worksheet
+            const ws = XLSX.utils.json_to_sheet(summaryData);
+            
+            // Create workbook
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Summary Report');
+            
+            // Generate Excel file and download
+            const currentDate = new Date().toISOString().split('T')[0];
+            XLSX.writeFile(wb, `Pet_Clinic_Summary_${currentDate}.xlsx`);
+            
+            // Show success message
+            showMessageBox('ជោគជ័យ', 'របាយការណ៍សង្ខេបត្រូវបាននាំចេញដោយជោគជ័យ!', 'success');
+        }
+        
+        // MessageBox Functions
+        function showMessageBox(title, text, type) {
+            messageTitle.textContent = title;
+            messageText.textContent = text;
+            
+            // Set icon based on type
+            const successIcon = document.querySelector('.success-icon');
+            if (type === 'error') {
+                successIcon.textContent = '✗';
+                successIcon.style.color = 'var(--danger-color)';
+            } else {
+                successIcon.textContent = '✓';
+                successIcon.style.color = 'var(--primary-color)';
+            }
+            
+            messageBox.classList.remove('hidden');
+            overlay.classList.remove('hidden');
+        }
+        
+        function hideMessageBox() {
+            messageBox.classList.add('hidden');
+            overlay.classList.add('hidden');
+        }
+        
+        // Initialize with sample data if empty
+        if (pets.length === 0) {
+            pets = [
+                {
+                    id: 'Pet001',
+                    petCount: 2,
+                    ownerName: 'ស៊ីណាត',
+                    petName: 'ដារីង',
+                    petType: 'ឆ្កែ',
+                    checkInDate: '2023-10-15',
+                    checkOutDate: '2023-10-20',
+                    dailyRate: 10,
+                    status: 'checked-out',
+                    discount: 0
+                },
+                {
+                    id: 'Pet002',
+                    petCount: 1,
+                    ownerName: 'វណ្ណា',
+                    petName: 'ម្លិះ',
+                    petType: 'ឆ្មា',
+                    checkInDate: '2023-10-18',
+                    checkOutDate: null,
+                    dailyRate: 10,
+                    status: 'checked-in',
+                    discount: 0
+                },
+                {
+                    id: 'Pet003',
+                    petCount: 3,
+                    ownerName: 'រិទ្ធិ',
+                    petName: 'តារា',
+                    petType: 'ឆ្កែ',
+                    checkInDate: '2023-11-01',
+                    checkOutDate: '2023-11-05',
+                    dailyRate: 15,
+                    status: 'checked-out',
+                    discount: 10
+                }
+            ];
+            savePets();
+        }
+    </script>
+</body>
+</html>
